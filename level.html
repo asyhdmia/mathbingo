@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Select Level | Math Bingo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body {
+      font-family: 'Fredoka One', cursive;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-yellow-100 via-pink-100 to-blue-100 min-h-screen flex flex-col items-center justify-center p-6">
+
+  <!-- Home Button -->
+  <button id="homeButton" onclick="goHome()" class="absolute top-6 left-6 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full shadow-md transition duration-300">
+    <i class="fas fa-home mr-2"></i>Home
+  </button>
+  
+  <button id="toggleSoundBtn" class="absolute top-6 right-6 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full shadow-md transition duration-300">
+        🔊 Music
+      </button>
+
+  <!-- Wrapper -->
+  <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-10 text-center border-4 border-dashed border-pink-300">
+    <h1 class="text-4xl text-indigo-600 mb-8">🎯 Select Difficulty Level</h1>
+
+    <div class="grid grid-cols-1 gap-4">
+      <button class="level-button bg-green-400 hover:bg-green-500 text-white py-3 px-6 rounded-full text-xl shadow-md transition duration-300" onclick="startGame(1)">
+        ➕ Level 1: Addition
+      </button>
+      <button class="level-button bg-yellow-400 hover:bg-yellow-500 text-white py-3 px-6 rounded-full text-xl shadow-md transition duration-300" onclick="startGame(2)">
+        ➖ Level 2: Subtraction
+      </button>
+      <button class="level-button bg-blue-400 hover:bg-blue-500 text-white py-3 px-6 rounded-full text-xl shadow-md transition duration-300" onclick="startGame(3)">
+        ➗ Level 3: Division
+      </button>
+      <button class="level-button bg-pink-400 hover:bg-pink-500 text-white py-3 px-6 rounded-full text-xl shadow-md transition duration-300" onclick="startGame(4)">
+        ✖️ Level 4: Multiplication
+      </button>
+      <button class="level-button bg-purple-400 hover:bg-purple-500 text-white py-3 px-6 rounded-full text-xl shadow-md transition duration-300" onclick="startGame(5)">
+        🔀 Level 5: Mixed
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function goHome() {
+      window.location.href = "index.html"; // adjust this if your homepage file is named differently
+    }
+
+    function startGame(level) {
+      // You can adjust this to navigate or load different levels
+      window.location.href = `bingo.html?level=${level}`;
+    }
+  </script>
+  
+  <script src="music.js"></script>
+<script>
+  const isMusicOn = initMusic();
+  const toggleBtn = document.getElementById('toggleSoundBtn');
+  if (toggleBtn) {
+    updateToggleButton(toggleBtn);
+    toggleBtn.addEventListener('click', () => toggleMusic(toggleBtn));
+  }
+</script>
+</body>
+</html>

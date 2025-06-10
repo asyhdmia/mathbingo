@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body {
+      font-family: 'Fredoka One', cursive;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-yellow-100 via-pink-100 to-blue-100 min-h-screen p-8">
+
+  <!-- Leaderboard Card -->
+  <div class="max-w-5xl mx-auto bg-white p-10 rounded-3xl shadow-2xl border-4 border-pink-200 fade-in">
+    <h1 class="text-5xl text-center text-pink-600 mb-10 drop-shadow-sm">🏆 Math Bingo Leaderboard</h1>
+
+    <!-- Leaderboard Table Container -->
+    <div id="leaderboardContainer" class="space-y-12"></div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-12">
+      <a href="index.html" class="inline-block bg-purple-400 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-110">
+        Home
+      </a>
+    </div>
+  </div>
+
+  <!-- Fetch Leaderboard Data -->
+  <script>
+  const levelColors = {
+    1: 'green-400',
+    2: 'yellow-300',
+    3: 'blue-400',
+    4: 'pink-300',
+    5: 'purple-400'
+  };
+
+  fetch('get_leaderboard.php')
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('leaderboardContainer');
+
+      for (let level in data) {
+        const entries = data[level];
+        const color = levelColors[level] || 'gray-300';
+
+        let tableHTML = `
+          <div class="space-y-4">
+            <h2 class="text-3xl font-bold text-${color}">✨ Level ${level}</h2>
+            <div class="overflow-x-auto rounded-lg shadow-lg">
+              <table class="min-w-full rounded-xl bg-white">
+                <thead class="bg-${color} text-white">
+                  <tr>
+                    <th class="text-left py-3 px-4 text-lg">#</th>
+                    <th class="text-left py-3 px-4 text-lg">Player</th>
+                    <th class="text-left py-3 px-4 text-lg">⏱️ Time</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+
+        entries.forEach((entry, index) => {
+          const crown = index === 0 ? "👑 " : "";
+          tableHTML += `
+            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-${color.replace('400', '100')} transition-all">
+              <td class="py-3 px-4 font-semibold text-${color}">${index + 1}</td>
+              <td class="py-3 px-4 text-gray-800">${crown}${entry.username}</td>
+              <td class="py-3 px-4 text-gray-600">${entry.time_elapsed}s</td>
+            </tr>`;
+        });
+
+        tableHTML += `
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+
+        container.innerHTML += tableHTML;
+      }
+    })
+    .catch(err => {
+      console.error("Failed to load leaderboard:", err);
+      document.getElementById('leaderboardContainer').innerText = "Failed to load leaderboard.";
+    });
+</script>
+
+</body>
+</html>

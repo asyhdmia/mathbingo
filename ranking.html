@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard - Math Bingo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body {
+      font-family: 'Fredoka One', cursive;
+    }
+
+    .bounce-slow {
+      animation: bounce 3s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-yellow-100 via-pink-100 to-blue-100 min-h-screen flex flex-col items-center justify-center p-6">
+
+  <!-- Header -->
+  <header class="text-center mb-10">
+    <h1 id="leaderboardTitle" class="text-4xl font-bold text-indigo-700 bounce-slow">🏆 Leaderboard</h1>
+    <p class="text-lg text-gray-700 mt-2">Check your ranking by level!</p>
+  </header>
+
+  <!-- Leaderboard Card -->
+  <main class="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 space-y-6">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-700">
+        <thead class="text-xs text-white uppercase bg-indigo-600">
+          <tr>
+            <th class="px-6 py-3">Rank</th>
+            <th class="px-6 py-3">Username</th>
+            <th class="px-6 py-3">Time (s)</th>
+            <th class="px-6 py-3">Level</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody" class="bg-white">
+          <!-- Score rows will be injected here -->
+        </tbody>
+      </table>
+      <div id="emptyMessage" class="text-center text-gray-500 mt-4 hidden">No scores available for this level.</div>
+    </div>
+
+    <!-- Navigation Button -->
+    <div class="text-center">
+      <a href="level.html" class="bg-indigo-600 text-white py-2 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition duration-300">
+        Level Menu
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 text-sm text-gray-500">
+    © 2025 Math Bingo | Created with 💡 for learning fun!
+  </footer>
+
+  <!-- Script to Load Scores -->
+  <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentLevel = parseInt(urlParams.get('level')) || 1;// default to Level 1
+  const levelTitles = {
+  1: "Level 1: Addition",
+  2: "Level 2: Subtraction",
+  3: "Level 3: Division",
+  4: "Level 4: Multiplication",
+  5: "Level 5: Mixed"
+};
+
+document.getElementById("leaderboardTitle").innerText = `🏆 Leaderboard - ${levelTitles[currentLevel] || "Math Game"}`;
+
+    fetch('get_scores.php')
+  .then(response => response.json())
+  .then(data => {
+    const tbody = document.getElementById('leaderboardBody');
+
+    if (data.error) {
+      tbody.innerHTML = `<tr><td colspan="4">${data.error}</td></tr>`;
+      return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentLevel = parseInt(urlParams.get('level')) || 1;
+
+    const filteredData = data.filter(row => row.level == currentLevel);
+
+    if (filteredData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">No scores for this level.</td></tr>`;
+      return;
+    }
+
+    filteredData.forEach((row, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${row.username}</td>
+        <td>${row.time_elapsed}</td>
+        <td>${row.level}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(err => {
+    document.getElementById('leaderboardBody').innerHTML = `<tr><td colspan="4">Error loading scores</td></tr>`;
+    console.error(err);
+  });
+
+  </script>
+</body>
+</html>
